@@ -1,15 +1,13 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,6 +17,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { TabsContent, TabsList, TabsTrigger, Tabs } from "@/components/ui/tabs";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 // Define form schema for validation
 const formSchema = z.object({
@@ -29,6 +29,9 @@ const formSchema = z.object({
   city: z.string().min(2, { message: "Please enter your city." }),
   state: z.string().min(2, { message: "Please enter your state." }),
   pincode: z.string().min(6, { message: "Please enter a valid PIN code." }),
+  paymentMethod: z.enum(["razorpay", "phonepay", "googlepay"], {
+    required_error: "Please select a payment method",
+  }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -51,16 +54,29 @@ const CheckoutPage = () => {
       city: "",
       state: "",
       pincode: "",
+      paymentMethod: "razorpay",
     },
   });
 
+  // Load Razorpay script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+    
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+  
   // Load cart items from localStorage
-  useState(() => {
+  useEffect(() => {
     const items = localStorage.getItem('cartItems');
     if (items) {
       setCartItems(JSON.parse(items));
     }
-  });
+  }, []);
 
   // Calculate totals
   const subtotal = cartItems.reduce(
@@ -80,24 +96,37 @@ const CheckoutPage = () => {
     const uniqueId = Date.now().toString(36) + Math.random().toString(36).substring(2);
     setOrderId(`ORDER-${uniqueId}`);
     
-    // In a real scenario, you would make an API call to create the order in your database
-    // and initialize Razorpay with the order details
-    
-    // For the demo, we'll simulate the payment process
-    initializeRazorpay(data, total, uniqueId);
+    // Process payment based on selected method
+    switch (data.paymentMethod) {
+      case "razorpay":
+        initializeRazorpay(data, total, uniqueId);
+        break;
+      case "phonepay":
+        initializePhonePe(data, total, uniqueId);
+        break;
+      case "googlepay":
+        initializeGooglePay(data, total, uniqueId);
+        break;
+      default:
+        initializeRazorpay(data, total, uniqueId);
+    }
   };
   
   const initializeRazorpay = (customerData: FormValues, amount: number, orderIdRef: string) => {
-    // In a real scenario, this would come from your backend after creating an order
+    // In a real implementation, you would make an API call to your backend to create an order
+    // The backend would use Razorpay's API to create the order and return the order ID
+    // For this demonstration, we'll simulate the order creation
+
+    // Razorpay checkout options
     const options = {
       key: "rzp_test_XXXXXXXXXXXXXXX", // Replace with your actual Razorpay key
       amount: amount * 100, // Razorpay amount is in paise
       currency: "INR",
       name: "Bakery Name",
       description: "Payment for your bakery order",
-      order_id: orderIdRef,
+      order_id: orderIdRef, // This would come from your backend in a real implementation
       handler: function(response: any) {
-        handlePaymentSuccess(response, customerData, orderIdRef);
+        handlePaymentSuccess(response, customerData, orderIdRef, "razorpay");
       },
       prefill: {
         name: customerData.name,
@@ -112,14 +141,58 @@ const CheckoutPage = () => {
       }
     };
     
-    // In a real implementation, you would load the Razorpay SDK and create a new instance
-    // For demo purposes, we'll just simulate success
+    // Initialize Razorpay
+    try {
+      const paymentObject = new (window as any).Razorpay(options);
+      paymentObject.open();
+      setIsPaymentDialogOpen(false);
+    } catch (error) {
+      console.error("Razorpay Error:", error);
+      // For demo purposes, we'll simulate a successful payment after a delay
+      setTimeout(() => {
+        handlePaymentSuccess({ razorpay_payment_id: "pay_" + Math.random().toString(36).substring(2) }, customerData, orderIdRef, "razorpay");
+      }, 2000);
+    }
+  };
+  
+  const initializePhonePe = (customerData: FormValues, amount: number, orderIdRef: string) => {
+    // In a real implementation, you would make an API call to your backend
+    // The backend would use PhonePe's API to create a payment link and return it
+    // For this demonstration, we'll simulate the process
+    
+    console.log("PhonePe payment initiated", { customerData, amount, orderIdRef });
+    
+    // Simulate PhonePe API call and redirect
+    // In a real implementation, you would redirect to PhonePe's payment page
     setTimeout(() => {
-      handlePaymentSuccess({ razorpay_payment_id: "pay_" + Math.random().toString(36).substring(2) }, customerData, orderIdRef);
+      handlePaymentSuccess(
+        { phonepay_payment_id: "ppay_" + Math.random().toString(36).substring(2) }, 
+        customerData, 
+        orderIdRef,
+        "phonepay"
+      );
     }, 2000);
   };
   
-  const handlePaymentSuccess = (response: any, customerData: FormValues, orderIdRef: string) => {
+  const initializeGooglePay = (customerData: FormValues, amount: number, orderIdRef: string) => {
+    // In a real implementation, you would integrate Google Pay using their SDK
+    // For this demonstration, we'll simulate the process
+    
+    console.log("Google Pay payment initiated", { customerData, amount, orderIdRef });
+    
+    // Simulate Google Pay API call
+    // In a real implementation, you would use Google Pay's API
+    setTimeout(() => {
+      handlePaymentSuccess(
+        { googlepay_payment_id: "gpay_" + Math.random().toString(36).substring(2) }, 
+        customerData, 
+        orderIdRef,
+        "googlepay"
+      );
+    }, 2000);
+  };
+  
+  const handlePaymentSuccess = (response: any, customerData: FormValues, orderIdRef: string, paymentMethod: string) => {
     // Create the order object with all details
     const orderDetails = {
       id: orderIdRef,
@@ -129,7 +202,8 @@ const CheckoutPage = () => {
       tax,
       total,
       status: "pending",
-      paymentId: response.razorpay_payment_id,
+      paymentId: response.razorpay_payment_id || response.phonepay_payment_id || response.googlepay_payment_id,
+      paymentMethod: paymentMethod,
       createdAt: new Date().toISOString()
     };
     
@@ -278,6 +352,65 @@ const CheckoutPage = () => {
                             <FormLabel>PIN Code</FormLabel>
                             <FormControl>
                               <Input placeholder="6-digit PIN code" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    
+                    {/* Payment Methods */}
+                    <div className="mt-6">
+                      <h3 className="text-lg font-serif mb-4">Select Payment Method</h3>
+                      
+                      <FormField
+                        control={form.control}
+                        name="paymentMethod"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <RadioGroup
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                                className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                              >
+                                <FormItem className="flex items-center space-x-3 space-y-0">
+                                  <FormControl>
+                                    <RadioGroupItem value="razorpay" />
+                                  </FormControl>
+                                  <FormLabel className="font-normal cursor-pointer flex items-center">
+                                    <img src="https://cdn.razorpay.com/static/assets/logo/payment-method.svg" 
+                                         alt="Razorpay" 
+                                         className="h-6 mr-2" />
+                                    Razorpay
+                                  </FormLabel>
+                                </FormItem>
+                                
+                                <FormItem className="flex items-center space-x-3 space-y-0">
+                                  <FormControl>
+                                    <RadioGroupItem value="phonepay" />
+                                  </FormControl>
+                                  <FormLabel className="font-normal cursor-pointer flex items-center">
+                                    <span className="text-purple-600 font-bold mr-1">Phone</span>
+                                    <span className="text-blue-600 font-bold">Pe</span>
+                                  </FormLabel>
+                                </FormItem>
+                                
+                                <FormItem className="flex items-center space-x-3 space-y-0">
+                                  <FormControl>
+                                    <RadioGroupItem value="googlepay" />
+                                  </FormControl>
+                                  <FormLabel className="font-normal cursor-pointer">
+                                    <span className="text-blue-600 font-medium">G</span>
+                                    <span className="text-red-500 font-medium">o</span>
+                                    <span className="text-yellow-500 font-medium">o</span>
+                                    <span className="text-blue-600 font-medium">g</span>
+                                    <span className="text-green-500 font-medium">l</span>
+                                    <span className="text-red-500 font-medium">e</span>
+                                    <span className="ml-1 text-gray-600">Pay</span>
+                                  </FormLabel>
+                                </FormItem>
+                              </RadioGroup>
                             </FormControl>
                             <FormMessage />
                           </FormItem>

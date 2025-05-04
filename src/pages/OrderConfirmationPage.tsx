@@ -15,6 +15,7 @@ interface OrderDetails {
     city: string;
     state: string;
     pincode: string;
+    paymentMethod?: string;
   };
   items: Array<{
     id: string;
@@ -29,6 +30,7 @@ interface OrderDetails {
   total: number;
   status: string;
   paymentId: string;
+  paymentMethod?: string;
   createdAt: string;
 }
 
@@ -50,6 +52,15 @@ const OrderConfirmationPage = () => {
       }
     }
   }, [location.state]);
+
+  const getPaymentMethodName = (method?: string) => {
+    switch (method) {
+      case "razorpay": return "Razorpay";
+      case "phonepay": return "PhonePe";
+      case "googlepay": return "Google Pay";
+      default: return "Online Payment";
+    }
+  };
 
   if (!order) {
     return (
@@ -107,6 +118,7 @@ const OrderConfirmationPage = () => {
                 <p className="text-sm">Order ID: <span className="font-medium">{order.id}</span></p>
                 <p className="text-sm mt-1">Date: <span className="font-medium">{new Date(order.createdAt).toLocaleDateString()}</span></p>
                 <p className="text-sm mt-1">Status: <span className="font-medium uppercase text-amber-600">{order.status}</span></p>
+                <p className="text-sm mt-1">Payment Method: <span className="font-medium">{getPaymentMethodName(order.paymentMethod)}</span></p>
               </div>
               
               <div>
