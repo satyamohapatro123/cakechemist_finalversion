@@ -31,7 +31,7 @@ export function ProductCard({ id, name, price, image, category }: ProductCardPro
           <p className="text-sm text-muted-foreground">{category}</p>
         </div>
         <div className="text-right">
-          <p className="font-medium">${price.toFixed(2)}</p>
+          <p className="font-medium">₹{price.toFixed(2)}</p>
           <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full mt-1" title="Add to cart">
             <ShoppingBag className="h-4 w-4" />
           </Button>

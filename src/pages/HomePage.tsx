@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/section-heading";
@@ -6,33 +5,33 @@ import { ProductCard } from "@/components/ui/product-card";
 import { Testimonial } from "@/components/ui/testimonial";
 
 const HomePage = () => {
-  // Sample featured products
+  // Sample featured products with prices in Indian Rupees
   const featuredProducts = [
     {
       id: "1",
       name: "Classic Croissant",
-      price: 3.99,
+      price: 199.50,
       image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?q=80&w=1000&auto=format&fit=crop",
       category: "Pastry"
     },
     {
       id: "2",
       name: "Chocolate Cake",
-      price: 28.99,
+      price: 1299.00,
       image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1000&auto=format&fit=crop",
       category: "Cakes"
     },
     {
       id: "3",
       name: "Sourdough Bread",
-      price: 6.49,
+      price: 299.00,
       image: "https://images.unsplash.com/photo-1585478259715-4d3f99e36561?q=80&w=1000&auto=format&fit=crop",
       category: "Bread"
     },
     {
       id: "4",
       name: "Fruit Tart",
-      price: 4.99,
+      price: 249.50,
       image: "https://images.unsplash.com/photo-1519869325930-281384150729?q=80&w=1000&auto=format&fit=crop",
       category: "Desserts"
     }

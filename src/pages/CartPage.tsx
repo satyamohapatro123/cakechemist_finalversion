@@ -20,14 +20,14 @@ const CartPage = () => {
     {
       id: "1",
       name: "Classic Croissant",
-      price: 3.99,
+      price: 199.50,
       image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?q=80&w=1000&auto=format&fit=crop",
       quantity: 2
     },
     {
       id: "3",
       name: "Sourdough Bread",
-      price: 6.49,
+      price: 299.00,
       image: "https://images.unsplash.com/photo-1585478259715-4d3f99e36561?q=80&w=1000&auto=format&fit=crop",
       quantity: 1
     }
@@ -57,7 +57,7 @@ const CartPage = () => {
     0
   );
   
-  const tax = subtotal * 0.0825; // 8.25% tax rate
+  const tax = subtotal * 0.18; // 18% GST rate for India
   const total = subtotal + tax;
 
   return (
@@ -103,7 +103,7 @@ const CartPage = () => {
                       
                       <div className="ml-4 flex-grow">
                         <h3 className="font-medium">{item.name}</h3>
-                        <p className="text-muted-foreground text-sm mt-1">${item.price.toFixed(2)}</p>
+                        <p className="text-muted-foreground text-sm mt-1">₹{item.price.toFixed(2)}</p>
                         
                         <div className="flex items-center mt-2">
                           <button
@@ -126,7 +126,7 @@ const CartPage = () => {
                       
                       <div className="flex flex-col items-end">
                         <span className="font-medium">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          ₹{(item.price * item.quantity).toFixed(2)}
                         </span>
                         <button
                           className="text-muted-foreground hover:text-destructive transition-colors mt-2"
@@ -148,17 +148,17 @@ const CartPage = () => {
                   <div className="space-y-3 text-sm border-b border-border pb-4 mb-4">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
-                      <span>${subtotal.toFixed(2)}</span>
+                      <span>₹{subtotal.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Tax (8.25%)</span>
-                      <span>${tax.toFixed(2)}</span>
+                      <span>GST (18%)</span>
+                      <span>₹{tax.toFixed(2)}</span>
                     </div>
                   </div>
                   
                   <div className="flex justify-between font-medium text-lg mb-6">
                     <span>Total</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>₹{total.toFixed(2)}</span>
                   </div>
                   
                   <Button className="w-full" asChild>

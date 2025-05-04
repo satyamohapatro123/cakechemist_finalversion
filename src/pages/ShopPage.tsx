@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ProductCard } from "@/components/ui/product-card";
@@ -28,12 +27,12 @@ const ShopPage = () => {
     { id: "dessert", name: "Desserts" },
   ];
 
-  // Sample products
+  // Sample products with prices in Indian Rupees
   const allProducts: Product[] = [
     {
       id: "1",
       name: "Classic Croissant",
-      price: 3.99,
+      price: 199.50,
       image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?q=80&w=1000&auto=format&fit=crop",
       category: "Pastry",
       categoryId: "pastry"
@@ -41,7 +40,7 @@ const ShopPage = () => {
     {
       id: "2",
       name: "Chocolate Cake",
-      price: 28.99,
+      price: 1299.00,
       image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1000&auto=format&fit=crop",
       category: "Cakes",
       categoryId: "cake"
@@ -49,7 +48,7 @@ const ShopPage = () => {
     {
       id: "3",
       name: "Sourdough Bread",
-      price: 6.49,
+      price: 299.00,
       image: "https://images.unsplash.com/photo-1585478259715-4d3f99e36561?q=80&w=1000&auto=format&fit=crop",
       category: "Bread",
       categoryId: "bread"
@@ -57,7 +56,7 @@ const ShopPage = () => {
     {
       id: "4",
       name: "Fruit Tart",
-      price: 4.99,
+      price: 249.50,
       image: "https://images.unsplash.com/photo-1519869325930-281384150729?q=80&w=1000&auto=format&fit=crop",
       category: "Desserts",
       categoryId: "dessert"
@@ -65,7 +64,7 @@ const ShopPage = () => {
     {
       id: "5",
       name: "Baguette",
-      price: 3.49,
+      price: 169.00,
       image: "https://images.unsplash.com/photo-1549931319-a545dcf3bc73?q=80&w=1000&auto=format&fit=crop",
       category: "Bread",
       categoryId: "bread"
@@ -73,7 +72,7 @@ const ShopPage = () => {
     {
       id: "6",
       name: "Cinnamon Roll",
-      price: 4.29,
+      price: 189.00,
       image: "https://images.unsplash.com/photo-1509365465985-25d11c17e812?q=80&w=1000&auto=format&fit=crop",
       category: "Pastry",
       categoryId: "pastry"
@@ -81,7 +80,7 @@ const ShopPage = () => {
     {
       id: "7",
       name: "Red Velvet Cake",
-      price: 32.99,
+      price: 1499.00,
       image: "https://images.unsplash.com/photo-1586788680434-30d324626f4c?q=80&w=1000&auto=format&fit=crop",
       category: "Cakes",
       categoryId: "cake"
@@ -89,7 +88,7 @@ const ShopPage = () => {
     {
       id: "8",
       name: "Cheesecake",
-      price: 5.99,
+      price: 279.00,
       image: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?q=80&w=1000&auto=format&fit=crop",
       category: "Desserts",
       categoryId: "dessert"
