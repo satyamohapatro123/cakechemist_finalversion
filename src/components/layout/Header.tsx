@@ -1,15 +1,41 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ShoppingBag, Menu, X } from 'lucide-react';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [cartItemsCount, setCartItemsCount] = useState(0);
   
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  // Function to update cart count
+  const updateCartCount = () => {
+    const cartItems = localStorage.getItem('cartItems');
+    if (cartItems) {
+      const items = JSON.parse(cartItems);
+      const totalItems = items.reduce((sum: number, item: any) => sum + item.quantity, 0);
+      setCartItemsCount(totalItems);
+    } else {
+      setCartItemsCount(0);
+    }
+  };
+
+  useEffect(() => {
+    // Initialize cart count
+    updateCartCount();
+    
+    // Listen for cart updates
+    window.addEventListener('cartUpdated', updateCartCount);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('cartUpdated', updateCartCount);
+    };
+  }, []);
 
   return (
     <header className="py-4 bg-background sticky top-0 z-50 shadow-sm">
@@ -31,7 +57,7 @@ const Header = () => {
         <div className="flex items-center space-x-4">
           <Link to="/cart" className="p-2 relative">
             <ShoppingBag className="h-6 w-6" />
-            <span className="absolute -top-1 -right-1 bg-bakery-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">0</span>
+            <span className="absolute -top-1 -right-1 bg-bakery-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">{cartItemsCount}</span>
           </Link>
           <Button variant="default" asChild className="hidden lg:flex">
             <Link to="/shop">Order Now</Link>

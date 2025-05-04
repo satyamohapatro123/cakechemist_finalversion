@@ -1,10 +1,10 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
-import { Trash } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { Trash, Plus, Minus } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface CartItem {
   id: string;
@@ -12,39 +12,53 @@ interface CartItem {
   price: number;
   image: string;
   quantity: number;
+  category: string;
 }
 
 const CartPage = () => {
   const { toast } = useToast();
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: "1",
-      name: "Classic Croissant",
-      price: 199.50,
-      image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?q=80&w=1000&auto=format&fit=crop",
-      quantity: 2
-    },
-    {
-      id: "3",
-      name: "Sourdough Bread",
-      price: 299.00,
-      image: "https://images.unsplash.com/photo-1585478259715-4d3f99e36561?q=80&w=1000&auto=format&fit=crop",
-      quantity: 1
-    }
-  ]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+  // Load cart items from localStorage
+  useEffect(() => {
+    const loadCartItems = () => {
+      const items = localStorage.getItem('cartItems');
+      if (items) {
+        setCartItems(JSON.parse(items));
+      }
+    };
+
+    loadCartItems();
+    window.addEventListener('cartUpdated', loadCartItems);
+
+    return () => {
+      window.removeEventListener('cartUpdated', loadCartItems);
+    };
+  }, []);
 
   const handleQuantityChange = (id: string, newQuantity: number) => {
     if (newQuantity < 1) return;
     
-    setCartItems(prev => 
-      prev.map(item => 
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      )
+    const updatedItems = cartItems.map(item => 
+      item.id === id ? { ...item, quantity: newQuantity } : item
     );
+    
+    setCartItems(updatedItems);
+    localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+    
+    // Trigger cart update event
+    const event = new CustomEvent('cartUpdated');
+    window.dispatchEvent(event);
   };
 
   const handleRemoveItem = (id: string) => {
-    setCartItems(prev => prev.filter(item => item.id !== id));
+    const updatedItems = cartItems.filter(item => item.id !== id);
+    setCartItems(updatedItems);
+    localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+    
+    // Trigger cart update event
+    const event = new CustomEvent('cartUpdated');
+    window.dispatchEvent(event);
     
     toast({
       title: "Item removed",
@@ -52,6 +66,7 @@ const CartPage = () => {
     });
   };
 
+  // Calculate totals
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
@@ -59,6 +74,7 @@ const CartPage = () => {
   
   const tax = subtotal * 0.18; // 18% GST rate for India
   const total = subtotal + tax;
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <main>
@@ -67,7 +83,7 @@ const CartPage = () => {
         <div className="container-custom">
           <SectionHeading
             title="Your Cart"
-            subtitle="Review your items before checkout"
+            subtitle={`You have ${totalItems} item${totalItems !== 1 ? 's' : ''} in your cart`}
             center
           />
         </div>
@@ -110,7 +126,7 @@ const CartPage = () => {
                             className="w-8 h-8 flex items-center justify-center border border-border rounded-l-md"
                             onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
                           >
-                            -
+                            <Minus className="h-3 w-3" />
                           </button>
                           <span className="w-10 h-8 flex items-center justify-center border-t border-b border-border">
                             {item.quantity}
@@ -119,7 +135,7 @@ const CartPage = () => {
                             className="w-8 h-8 flex items-center justify-center border border-border rounded-r-md"
                             onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                           >
-                            +
+                            <Plus className="h-3 w-3" />
                           </button>
                         </div>
                       </div>
@@ -147,17 +163,17 @@ const CartPage = () => {
                   
                   <div className="space-y-3 text-sm border-b border-border pb-4 mb-4">
                     <div className="flex justify-between">
-                      <span>Subtotal</span>
+                      <span>Items ({totalItems}):</span>
                       <span>₹{subtotal.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>GST (18%)</span>
+                      <span>GST (18%):</span>
                       <span>₹{tax.toFixed(2)}</span>
                     </div>
                   </div>
                   
                   <div className="flex justify-between font-medium text-lg mb-6">
-                    <span>Total</span>
+                    <span>Total:</span>
                     <span>₹{total.toFixed(2)}</span>
                   </div>
                   
