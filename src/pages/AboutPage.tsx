@@ -37,13 +37,13 @@ const AboutPage = () => {
               <SectionHeading title="Our Story" />
               <div className="space-y-4 text-lg">
                 <p>
-                  Sweet Delights was founded in 2010 by Jane Smith, a passionate baker with a dream of creating a neighborhood bakery where every item is made with care, quality ingredients, and traditional techniques.
+                  CakeChemist was founded in 2015 by Dr. Priya Sharma, a food scientist with a passion for baking who dreamed of creating a bakery where science and culinary art intersect to create extraordinary cakes.
                 </p>
                 <p>
-                  What started as a small bakery with just three signature items has grown into a beloved local institution, known for our artisanal breads, decadent pastries, and custom celebration cakes.
+                  What started as an experimental kitchen with just three signature cake formulas has grown into an innovative bakery known for our molecular gastronomy techniques, unique flavor combinations, and visually stunning cake designs.
                 </p>
                 <p>
-                  Despite our growth, we remain committed to our founding principles: using the finest ingredients, baking fresh daily, and treating every customer like family.
+                  Despite our growth, we remain committed to our founding principles: using premium ingredients, applying scientific precision to our baking process, and pushing the boundaries of what's possible in cake design.
                 </p>
               </div>
             </div>
@@ -59,35 +59,35 @@ const AboutPage = () => {
             subtitle="What makes our bakery special"
             center
           />
-          
+
           <div className="grid md:grid-cols-3 gap-8 mt-12">
             <div className="text-center p-6">
               <div className="w-20 h-20 bg-bakery-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl text-bakery-700">🌾</span>
+                <span className="text-3xl text-bakery-700">🧪</span>
               </div>
-              <h3 className="text-xl font-serif mb-3">Quality Ingredients</h3>
+              <h3 className="text-xl font-serif mb-3">Scientific Precision</h3>
               <p>
-                We source the finest organic flour, European-style butter, farm-fresh eggs, and seasonal produce to ensure every bite is exceptional.
+                We approach baking with scientific rigor, measuring ingredients to the gram and controlling temperature and humidity for perfect results every time.
               </p>
             </div>
-            
+
             <div className="text-center p-6">
               <div className="w-20 h-20 bg-bakery-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl text-bakery-700">👨‍🍳</span>
+                <span className="text-3xl text-bakery-700">🔬</span>
               </div>
-              <h3 className="text-xl font-serif mb-3">Traditional Methods</h3>
+              <h3 className="text-xl font-serif mb-3">Innovative Techniques</h3>
               <p>
-                We believe in taking the time to do things right, using time-honored techniques handed down through generations of bakers.
+                We embrace molecular gastronomy and cutting-edge baking methods to create unique textures, flavors, and visual presentations that surprise and delight.
               </p>
             </div>
-            
+
             <div className="text-center p-6">
               <div className="w-20 h-20 bg-bakery-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl text-bakery-700">❤️</span>
+                <span className="text-3xl text-bakery-700">🧠</span>
               </div>
-              <h3 className="text-xl font-serif mb-3">Made with Love</h3>
+              <h3 className="text-xl font-serif mb-3">Creative Experimentation</h3>
               <p>
-                Every item that leaves our bakery is crafted with care and attention to detail by our passionate team of bakers.
+                Our test kitchen is constantly developing new cake formulas, flavor combinations, and decorative techniques to push the boundaries of cake design.
               </p>
             </div>
           </div>
@@ -102,36 +102,36 @@ const AboutPage = () => {
             subtitle="The passionate people behind our delicious creations"
             center
           />
-          
+
           <div className="grid md:grid-cols-3 gap-8 mt-12">
             <div className="text-center">
               <img
-                src="https://images.unsplash.com/photo-1566554273541-37a9ca77b91f?q=80&w=1000&auto=format&fit=crop"
-                alt="Jane Smith - Founder & Head Baker"
+                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1000&auto=format&fit=crop"
+                alt="Dr. Priya Sharma - Founder & Food Scientist"
                 className="w-64 h-64 object-cover rounded-full mx-auto mb-4"
               />
-              <h3 className="text-xl font-serif mb-1">Jane Smith</h3>
-              <p className="text-muted-foreground">Founder & Head Baker</p>
+              <h3 className="text-xl font-serif mb-1">Dr. Priya Sharma</h3>
+              <p className="text-muted-foreground">Founder & Food Scientist</p>
             </div>
-            
+
             <div className="text-center">
               <img
-                src="https://images.unsplash.com/photo-1595273670150-bd6c3c4e6482?q=80&w=1000&auto=format&fit=crop"
-                alt="Mark Johnson - Pastry Chef"
+                src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1000&auto=format&fit=crop"
+                alt="Arjun Patel - Molecular Gastronomy Specialist"
                 className="w-64 h-64 object-cover rounded-full mx-auto mb-4"
               />
-              <h3 className="text-xl font-serif mb-1">Mark Johnson</h3>
-              <p className="text-muted-foreground">Pastry Chef</p>
+              <h3 className="text-xl font-serif mb-1">Arjun Patel</h3>
+              <p className="text-muted-foreground">Molecular Gastronomy Specialist</p>
             </div>
-            
+
             <div className="text-center">
               <img
-                src="https://images.unsplash.com/photo-1597248374161-426f0d6d2fc9?q=80&w=1000&auto=format&fit=crop"
-                alt="Sarah Williams - Bread Specialist"
+                src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1000&auto=format&fit=crop"
+                alt="Meera Kapoor - Cake Design Artist"
                 className="w-64 h-64 object-cover rounded-full mx-auto mb-4"
               />
-              <h3 className="text-xl font-serif mb-1">Sarah Williams</h3>
-              <p className="text-muted-foreground">Bread Specialist</p>
+              <h3 className="text-xl font-serif mb-1">Meera Kapoor</h3>
+              <p className="text-muted-foreground">Cake Design Artist</p>
             </div>
           </div>
         </div>

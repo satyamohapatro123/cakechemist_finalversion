@@ -1,12 +1,22 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ProductCard } from "@/components/ui/product-card";
 import { Testimonial } from "@/components/ui/testimonial";
 
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  category: string;
+  categoryId?: string;
+  description?: string;
+}
+
 const HomePage = () => {
-  // Sample featured products with prices in Indian Rupees
-  const featuredProducts = [
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([
     {
       id: "1",
       name: "Classic Croissant",
@@ -35,7 +45,39 @@ const HomePage = () => {
       image: "https://images.unsplash.com/photo-1519869325930-281384150729?q=80&w=1000&auto=format&fit=crop",
       category: "Desserts"
     }
-  ];
+  ]);
+
+  // Load products from localStorage
+  useEffect(() => {
+    const loadProducts = () => {
+      const storedProducts = localStorage.getItem('products');
+      if (storedProducts) {
+        const allProducts = JSON.parse(storedProducts);
+        // Get the first 4 products for featured display
+        const featured = allProducts.slice(0, 4).map((product: Product) => ({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          category: product.category
+        }));
+        setFeaturedProducts(featured);
+      }
+    };
+
+    loadProducts();
+
+    // Listen for product updates
+    const handleProductsUpdated = () => {
+      loadProducts();
+    };
+
+    window.addEventListener('productsUpdated', handleProductsUpdated);
+
+    return () => {
+      window.removeEventListener('productsUpdated', handleProductsUpdated);
+    };
+  }, []);
 
   return (
     <main>
@@ -65,12 +107,12 @@ const HomePage = () => {
       {/* Featured Products */}
       <section className="py-20">
         <div className="container-custom">
-          <SectionHeading 
-            title="Our Featured Products" 
+          <SectionHeading
+            title="Our Featured Products"
             subtitle="Handmade with love and the finest ingredients"
             center
           />
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
             {featuredProducts.map((product) => (
               <ProductCard
@@ -83,7 +125,7 @@ const HomePage = () => {
               />
             ))}
           </div>
-          
+
           <div className="text-center mt-12">
             <Button variant="outline" asChild>
               <Link to="/shop">View All Products</Link>
@@ -104,15 +146,15 @@ const HomePage = () => {
               />
             </div>
             <div className="space-y-6">
-              <SectionHeading 
-                title="Our Story" 
+              <SectionHeading
+                title="Our Story"
                 subtitle="Crafting delicious memories since 2010"
               />
               <p className="text-lg">
-                At Sweet Delights, we believe in the power of a perfectly baked treat to brighten someone's day. Our bakery was founded with a simple mission: to create delicious, handcrafted baked goods using traditional methods and the finest ingredients available.
+                At CakeChemist, we blend the art of baking with scientific precision to create extraordinary cakes. Our bakery was founded with a unique mission: to craft innovative, delicious cakes using premium ingredients and creative techniques.
               </p>
               <p className="text-lg">
-                Every morning, our bakers arrive before dawn to mix, knead, and shape our signature breads, pastries, and desserts. We're committed to quality and authenticity in everything we make.
+                Every creation is a perfect balance of flavor, texture, and visual appeal. We approach baking like scientists in a lab, experimenting with ingredients and methods to achieve cake perfection.
               </p>
               <Button asChild>
                 <Link to="/about">Learn More About Us</Link>
@@ -125,26 +167,26 @@ const HomePage = () => {
       {/* Testimonial Section */}
       <section className="py-20">
         <div className="container-custom">
-          <SectionHeading 
-            title="What Our Customers Say" 
+          <SectionHeading
+            title="What Our Customers Say"
             center
           />
-          
+
           <div className="grid md:grid-cols-3 gap-8 mt-10">
-            <Testimonial 
-              quote="The croissants from Sweet Delights are better than what I've had in Paris! Flaky, buttery, and absolutely perfect."
-              author="Sarah Johnson"
+            <Testimonial
+              quote="The cakes from CakeChemist are truly extraordinary! The flavors are perfectly balanced and the designs are like edible works of art. Their fusion of Indian and Western flavors is unique."
+              author="Ananya Desai"
               role="Loyal Customer"
             />
-            <Testimonial 
-              quote="I ordered a custom cake for my daughter's birthday and it exceeded all my expectations. Not only was it beautiful, but it tasted amazing too!"
-              author="Michael Thompson"
+            <Testimonial
+              quote="I ordered a custom cake for my daughter's wedding and it exceeded all my expectations. The molecular gastronomy techniques they used created amazing textures!"
+              author="Rajesh Malhotra"
               role="Happy Parent"
             />
-            <Testimonial 
-              quote="Their sourdough bread is the best in town. I've been a weekly customer for years and the quality never disappoints."
-              author="Emily Rodriguez"
-              role="Bread Enthusiast"
+            <Testimonial
+              quote="Their signature Beaker Cake with cardamom and saffron is the most innovative dessert I've ever tasted. The combination of flavors and textures is pure genius."
+              author="Kavita Sharma"
+              role="Food Blogger"
             />
           </div>
         </div>

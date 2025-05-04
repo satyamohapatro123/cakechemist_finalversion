@@ -6,13 +6,26 @@ import { Button } from "@/components/ui/button";
 import { Trash, Plus, Minus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+interface Customization {
+  isEggless: boolean;
+  nameOnCake: string;
+  imageOnCake: boolean;
+  uploadedImage: string | null;
+  flavor: string;
+  size: string;
+  shape: string;
+}
+
 interface CartItem {
   id: string;
+  productId: string;
   name: string;
   price: number;
+  basePrice?: number;
   image: string;
   quantity: number;
   category: string;
+  customization?: Customization | null;
 }
 
 const CartPage = () => {
@@ -38,14 +51,14 @@ const CartPage = () => {
 
   const handleQuantityChange = (id: string, newQuantity: number) => {
     if (newQuantity < 1) return;
-    
-    const updatedItems = cartItems.map(item => 
+
+    const updatedItems = cartItems.map(item =>
       item.id === id ? { ...item, quantity: newQuantity } : item
     );
-    
+
     setCartItems(updatedItems);
     localStorage.setItem('cartItems', JSON.stringify(updatedItems));
-    
+
     // Trigger cart update event
     const event = new CustomEvent('cartUpdated');
     window.dispatchEvent(event);
@@ -55,11 +68,11 @@ const CartPage = () => {
     const updatedItems = cartItems.filter(item => item.id !== id);
     setCartItems(updatedItems);
     localStorage.setItem('cartItems', JSON.stringify(updatedItems));
-    
+
     // Trigger cart update event
     const event = new CustomEvent('cartUpdated');
     window.dispatchEvent(event);
-    
+
     toast({
       title: "Item removed",
       description: "The item has been removed from your cart.",
@@ -71,7 +84,7 @@ const CartPage = () => {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  
+
   const tax = subtotal * 0.18; // 18% GST rate for India
   const total = subtotal + tax;
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -116,11 +129,34 @@ const CartPage = () => {
                           className="h-full w-full object-cover"
                         />
                       </div>
-                      
+
                       <div className="ml-4 flex-grow">
                         <h3 className="font-medium">{item.name}</h3>
                         <p className="text-muted-foreground text-sm mt-1">₹{item.price.toFixed(2)}</p>
-                        
+
+                        {item.customization && (
+                          <div className="text-xs text-muted-foreground mt-1 space-y-1">
+                            {item.customization.isEggless && (
+                              <p>• Eggless</p>
+                            )}
+                            {item.customization.size && (
+                              <p>• Size: {item.customization.size}</p>
+                            )}
+                            {item.customization.flavor && (
+                              <p>• Flavor: {item.customization.flavor}</p>
+                            )}
+                            {item.customization.shape && (
+                              <p>• Shape: {item.customization.shape}</p>
+                            )}
+                            {item.customization.nameOnCake && (
+                              <p>• Name: "{item.customization.nameOnCake}"</p>
+                            )}
+                            {item.customization.imageOnCake && (
+                              <p>• Custom image added</p>
+                            )}
+                          </div>
+                        )}
+
                         <div className="flex items-center mt-2">
                           <button
                             className="w-8 h-8 flex items-center justify-center border border-border rounded-l-md"
@@ -139,7 +175,7 @@ const CartPage = () => {
                           </button>
                         </div>
                       </div>
-                      
+
                       <div className="flex flex-col items-end">
                         <span className="font-medium">
                           ₹{(item.price * item.quantity).toFixed(2)}
@@ -155,12 +191,12 @@ const CartPage = () => {
                   ))}
                 </div>
               </div>
-              
+
               {/* Order Summary */}
               <div>
                 <div className="bg-secondary p-6 rounded-md">
                   <h2 className="text-xl font-serif mb-4">Order Summary</h2>
-                  
+
                   <div className="space-y-3 text-sm border-b border-border pb-4 mb-4">
                     <div className="flex justify-between">
                       <span>Items ({totalItems}):</span>
@@ -171,16 +207,16 @@ const CartPage = () => {
                       <span>₹{tax.toFixed(2)}</span>
                     </div>
                   </div>
-                  
+
                   <div className="flex justify-between font-medium text-lg mb-6">
                     <span>Total:</span>
                     <span>₹{total.toFixed(2)}</span>
                   </div>
-                  
+
                   <Button className="w-full" asChild disabled={cartItems.length === 0}>
                     <Link to="/checkout">Proceed to Checkout</Link>
                   </Button>
-                  
+
                   <div className="text-center mt-4">
                     <Link to="/shop" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                       Continue Shopping
