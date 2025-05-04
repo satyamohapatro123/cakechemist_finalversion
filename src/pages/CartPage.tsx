@@ -177,7 +177,7 @@ const CartPage = () => {
                     <span>₹{total.toFixed(2)}</span>
                   </div>
                   
-                  <Button className="w-full" asChild>
+                  <Button className="w-full" asChild disabled={cartItems.length === 0}>
                     <Link to="/checkout">Proceed to Checkout</Link>
                   </Button>
                   
