@@ -1,73 +1,187 @@
-# Welcome to your Lovable project
+# CakeChemist - Bakery E-commerce Platform
 
-## Project info
+![CakeChemist Logo](https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=200&auto=format&fit=crop)
 
-**URL**: https://lovable.dev/projects/802daccd-0add-4bc9-86b5-61115758af4b
+CakeChemist is a comprehensive e-commerce platform for bakeries, offering a seamless shopping experience for customers and powerful management tools for administrators. The platform combines scientific precision with culinary artistry to deliver exceptional baked goods.
 
-## How can I edit this code?
+## 🌟 Features
 
-There are several ways of editing your application.
+### Customer-Facing Features
 
-**Use Lovable**
+#### 🛒 Shopping Experience
+- **Product Browsing**: Browse products by category with detailed filtering options
+- **Product Details**: View comprehensive product information, images, and descriptions
+- **Shopping Cart**: Add products to cart with quantity adjustment
+- **Cake Customization**: Customize cakes with options for:
+  - Egg/eggless options
+  - Name on cake
+  - Image upload
+  - Lactose-free options
+  - Vegan/non-vegan options
+  - Size selection
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/802daccd-0add-4bc9-86b5-61115758af4b) and start prompting.
+#### 🔐 User Authentication
+- **User Registration**: Create new accounts with email verification
+- **Google Login**: Quick login with Google account
+- **User Profiles**: Manage personal information and preferences
+- **Order History**: View past orders and their statuses
 
-Changes made via Lovable will be committed automatically to this repo.
+#### 📦 Checkout Process
+- **Automatic Location Detection**: Delivery charges calculated based on user's location
+- **Distance-Based Pricing**: Accurate delivery fees based on distance from store
+- **Free Delivery Threshold**: Automatic free delivery for orders above a certain amount
+- **Coupon Application**: Apply discount coupons during checkout
+- **Multiple Payment Options**: Pay with Razorpay, PhonePe, or Google Pay
+- **GST Handling**: GST calculation and optional GST number input for B2B orders
 
-**Use your preferred IDE**
+#### 📱 User Experience
+- **Responsive Design**: Optimized for all devices (mobile, tablet, desktop)
+- **Order Tracking**: Real-time updates on order status
+- **Email Notifications**: Automated emails for order confirmation and updates
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Admin Features
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+#### 🧁 Product Management
+- **Product CRUD**: Add, edit, view, and delete products
+- **Category Management**: Create and manage product categories
+- **Image Upload**: Upload and manage product images
+- **Inventory Management**: Track product availability
 
-Follow these steps:
+#### 👥 Team Management
+- **Team Member Profiles**: Add and manage team member information
+- **Role Assignment**: Assign roles and responsibilities
+- **Profile Images**: Upload and manage team member photos
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+#### ⭐ Testimonial Management
+- **Customer Reviews**: Add, edit, and manage customer testimonials
+- **Rating System**: Track and display customer ratings
+- **Testimonial Approval**: Review and approve testimonials before publishing
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+#### 📝 Content Management
+- **About Page Editor**: Edit "Our Story" and "Our Values" sections with images
+- **Contact Information**: Manage store address, working hours, and contact details
+- **Recipe Management**: Add and manage recipes with images and videos
+- **Gallery Management**: Create and manage photo galleries
 
-# Step 3: Install the necessary dependencies.
-npm i
+#### 💰 Pricing Management
+- **Dietary Options Pricing**: Set pricing for special dietary requirements
+- **Tax Settings**: Configure GST percentage and business GST number
+- **Delivery Charges**: Set up location-based delivery pricing
+  - Base delivery charge
+  - Charge per kilometer
+  - Maximum delivery distance
+  - Free delivery threshold
+- **Store Location**: Configure store location for delivery calculations
+- **Packaging Options**: Set pricing for different packaging types
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+#### 🏷️ Coupon Management
+- **Coupon Creation**: Create discount coupons with various parameters
+- **Usage Limits**: Set usage limits per customer
+- **Expiry Dates**: Configure coupon validity periods
+- **Minimum Order Value**: Set minimum order requirements for coupons
+
+#### 📊 Financial Dashboard
+- **Sales Analytics**: Track daily/weekly/monthly/yearly sales
+- **Expense Tracking**: Monitor business expenses
+- **Coupon Performance**: Analyze coupon usage and impact
+- **Profit Calculation**: View profit margins and financial health
+
+#### 🧾 Invoice Management
+- **Automated Invoicing**: Generate professional invoices automatically
+- **GST Handling**: Include GST details for tax compliance
+- **Business Information**: Customize invoice with business details
+- **Download & Print**: Easy invoice download and printing options
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/satyamohapatro123/cakechemist_finalversion.git
+
+# Navigate to the project directory
+cd cakechemist_finalversion
+
+# Install dependencies
+npm install
+
+# Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Admin Access
+To access the admin panel, navigate to `/admin` and use the following credentials:
+- **Username**: admin@cakechemist.com
+- **Password**: admin123
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🔧 Technologies Used
 
-**Use GitHub Codespaces**
+### Frontend
+- **React**: UI library for building the user interface
+- **TypeScript**: Type-safe JavaScript
+- **Tailwind CSS**: Utility-first CSS framework
+- **shadcn/ui**: High-quality UI components
+- **React Router**: For navigation and routing
+- **React Hook Form**: Form validation and handling
+- **Zod**: Schema validation
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### State Management & Data Handling
+- **Context API**: For global state management
+- **localStorage**: For persistent data storage (development)
+- **Custom Hooks**: For reusable logic
 
-## What technologies are used for this project?
+### UI/UX Features
+- **Responsive Design**: Mobile-first approach
+- **Dark/Light Mode**: Theme switching capability
+- **Toast Notifications**: User feedback system
+- **Modal Dialogs**: For interactive prompts
+- **Form Validation**: Client-side validation
 
-This project is built with:
+## 📱 Responsive Design
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+CakeChemist is fully responsive and optimized for:
+- Mobile devices
+- Tablets
+- Desktop computers
 
-## How can I deploy this project?
+## 🔜 Upcoming Features
 
-Simply open [Lovable](https://lovable.dev/projects/802daccd-0add-4bc9-86b5-61115758af4b) and click on Share -> Publish.
+### Deployment & Infrastructure
+- **Firebase Integration**: Database, authentication, and storage
+- **Vercel/Netlify Deployment**: Production hosting
+- **Custom Domain**: Connect to cakechemist.com
 
-## Can I connect a custom domain to my Lovable project?
+### Enhanced Authentication
+- **Two-Factor Authentication**: Additional security for admin accounts
+- **Social Login Options**: Facebook, Apple login integration
+- **Role-Based Access Control**: Different permission levels
 
-Yes, you can!
+### Payment & Marketing
+- **Razorpay Integration**: Live payment processing
+- **Google Analytics**: User behavior tracking
+- **Google AdSense**: Monetization options
+- **Meta Marketing Suite**: Facebook and Instagram integration
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Performance & SEO
+- **SEO Optimization**: Meta tags and structured data
+- **Performance Improvements**: Code splitting and lazy loading
+- **PWA Support**: Progressive Web App capabilities
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 👥 Contributors
+
+- Satya Mohapatro - Project Lead & Developer
+
+## 📞 Contact
+
+For inquiries, please contact:
+- Email: contact@cakechemist.com
+- Website: [www.cakechemist.com](https://www.cakechemist.com)
