@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -109,27 +110,55 @@ const AdminProfile = () => {
     const loadAdmin = () => {
       const currentUser = localStorage.getItem('currentUser');
       if (currentUser) {
-        const userData = JSON.parse(currentUser);
-        if (userData.role === 'admin') {
-          setAdmin(userData);
+        try {
+          const userData = JSON.parse(currentUser);
+          if (userData.role === 'admin') {
+            // Ensure the admin object has all required properties
+            const adminData: AdminData = {
+              id: userData.id || `admin_${Date.now()}`,
+              name: userData.name || "Admin User",
+              email: userData.email || "admin@cakechemist.com",
+              phone: userData.phone || "",
+              profilePicture: userData.profilePicture,
+              role: "admin",
+              permissions: userData.permissions || {
+                manageProducts: true,
+                manageOrders: true,
+                manageUsers: true,
+                manageFinancials: true,
+                manageSettings: true
+              },
+              createdAt: userData.createdAt || new Date().toISOString(),
+              lastLogin: userData.lastLogin,
+              twoFactorEnabled: userData.twoFactorEnabled || false
+            };
 
-          // Set form default values
-          profileForm.reset({
-            name: userData.name,
-            email: userData.email,
-            phone: userData.phone || "",
-          });
+            // Update the admin data in localStorage with the complete object
+            localStorage.setItem('currentUser', JSON.stringify(adminData));
 
-          securityForm.reset({
-            twoFactorEnabled: userData.twoFactorEnabled || false,
-          });
+            setAdmin(adminData);
 
-          // Set profile image if available
-          if (userData.profilePicture) {
-            setProfileImage(userData.profilePicture);
+            // Set form default values
+            profileForm.reset({
+              name: adminData.name,
+              email: adminData.email,
+              phone: adminData.phone || "",
+            });
+
+            securityForm.reset({
+              twoFactorEnabled: adminData.twoFactorEnabled || false,
+            });
+
+            // Set profile image if available
+            if (adminData.profilePicture) {
+              setProfileImage(adminData.profilePicture);
+            }
+          } else {
+            // Redirect to login if not an admin
+            navigate('/login');
           }
-        } else {
-          // Redirect to login if not an admin
+        } catch (error) {
+          console.error("Error parsing admin data:", error);
           navigate('/login');
         }
       } else {
@@ -563,7 +592,7 @@ const AdminProfile = () => {
                   <div>
                     <h3 className="font-medium">Account Created</h3>
                     <p className="text-sm text-muted-foreground">
-                      {new Date(admin.createdAt).toLocaleDateString()}
+                      {admin.createdAt ? new Date(admin.createdAt).toLocaleDateString() : new Date().toLocaleDateString()}
                     </p>
                   </div>
                 </div>
@@ -592,7 +621,7 @@ const AdminProfile = () => {
               <CardContent>
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 gap-4">
-                    {Object.entries(admin.permissions).map(([key, value]) => (
+                    {admin.permissions && Object.entries(admin.permissions).map(([key, value]) => (
                       <div key={key} className="flex items-center justify-between p-4 border rounded-lg">
                         <div className="flex items-center">
                           <Key className="h-4 w-4 mr-2 text-bakery-500" />
@@ -613,6 +642,11 @@ const AdminProfile = () => {
                         </div>
                       </div>
                     ))}
+                    {!admin.permissions && (
+                      <div className="text-center py-4 text-muted-foreground">
+                        No permissions found. Please contact a super administrator.
+                      </div>
+                    )}
                   </div>
 
                   <Alert>
