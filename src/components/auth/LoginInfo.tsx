@@ -18,7 +18,7 @@ const LoginInfo = () => {
             </div>
           </div>
           <div className="text-xs text-muted-foreground mt-2">
-            Note: For regular users, any email/password combination will work.
+            Note: For regular users, you can register a new account or use Google login.
           </div>
         </div>
       </AlertDescription>

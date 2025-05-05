@@ -21,6 +21,8 @@ interface Product {
 
 interface Customization {
   isEggless: boolean;
+  isLactoseFree: boolean;
+  isVegan: boolean;
   nameOnCake: string;
   imageOnCake: boolean;
   uploadedImage: string | null;
@@ -39,6 +41,8 @@ const ProductDetailPage = () => {
   const [isCustomizing, setIsCustomizing] = useState(false);
   const [customization, setCustomization] = useState<Customization>({
     isEggless: false,
+    isLactoseFree: false,
+    isVegan: false,
     nameOnCake: "",
     imageOnCake: false,
     uploadedImage: null,
@@ -47,9 +51,49 @@ const ProductDetailPage = () => {
     shape: "round"
   });
 
+  // Load pricing configuration
+  const [pricingConfig, setPricingConfig] = useState({
+    dietaryOptions: [
+      { id: "eggless", name: "Eggless", price: 100, isActive: true },
+      { id: "lactoseFree", name: "Lactose-Free", price: 120, isActive: true },
+      { id: "vegan", name: "Vegan", price: 150, isActive: true }
+    ]
+  });
+
+  // Load pricing configuration from localStorage
+  useEffect(() => {
+    const storedConfig = localStorage.getItem('pricingConfig');
+    if (storedConfig) {
+      setPricingConfig(JSON.parse(storedConfig));
+    }
+
+    // Listen for pricing updates
+    const handlePricingUpdated = () => {
+      const updatedConfig = localStorage.getItem('pricingConfig');
+      if (updatedConfig) {
+        setPricingConfig(JSON.parse(updatedConfig));
+      }
+    };
+
+    window.addEventListener('pricingUpdated', handlePricingUpdated);
+
+    return () => {
+      window.removeEventListener('pricingUpdated', handlePricingUpdated);
+    };
+  }, []);
+
   // Calculate price with customizations
   const basePrice = product?.price || 0;
-  const egglessPrice = customization.isEggless ? 100 : 0;
+
+  // Get dietary option prices from config
+  const egglessOption = pricingConfig.dietaryOptions.find(o => o.id === "eggless");
+  const lactoseFreeOption = pricingConfig.dietaryOptions.find(o => o.id === "lactoseFree");
+  const veganOption = pricingConfig.dietaryOptions.find(o => o.id === "vegan");
+
+  const egglessPrice = customization.isEggless && egglessOption?.isActive ? egglessOption.price : 0;
+  const lactoseFreePrice = customization.isLactoseFree && lactoseFreeOption?.isActive ? lactoseFreeOption.price : 0;
+  const veganPrice = customization.isVegan && veganOption?.isActive ? veganOption.price : 0;
+
   const namePrice = customization.nameOnCake ? 50 : 0;
   const imagePrice = customization.imageOnCake ? 150 : 0;
 
@@ -72,99 +116,78 @@ const ProductDetailPage = () => {
                     customization.shape === "heart" ? 100 :
                     customization.shape === "custom" ? 200 : 0;
 
-  const totalItemPrice = basePrice + egglessPrice + namePrice + imagePrice + sizePrice + flavorPrice + shapePrice;
+  const totalItemPrice = basePrice + egglessPrice + lactoseFreePrice + veganPrice + namePrice + imagePrice + sizePrice + flavorPrice + shapePrice;
 
   // Load product data
   useEffect(() => {
-    // In a real app, this would be an API call
-    // For now, we'll use the sample products from localStorage or hardcoded data
+    // Load products from localStorage
     const loadProduct = () => {
-      const allProducts = [
-        {
-          id: "1",
-          name: "Classic Croissant",
-          price: 199.50,
-          image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?q=80&w=1000&auto=format&fit=crop",
-          category: "Pastry",
-          categoryId: "pastry",
-          description: "A buttery, flaky pastry named for its historical crescent shape."
-        },
-        {
-          id: "2",
-          name: "Chocolate Cake",
-          price: 1299.00,
-          image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1000&auto=format&fit=crop",
-          category: "Cakes",
-          categoryId: "cake",
-          description: "Rich, moist chocolate cake with smooth chocolate ganache and chocolate shavings."
-        },
-        {
-          id: "3",
-          name: "Sourdough Bread",
-          price: 299.00,
-          image: "https://images.unsplash.com/photo-1585478259715-4d3f99e36561?q=80&w=1000&auto=format&fit=crop",
-          category: "Bread",
-          categoryId: "bread",
-          description: "Artisan bread made with a fermented dough starter, giving it a slightly sour taste."
-        },
-        {
-          id: "4",
-          name: "Fruit Tart",
-          price: 249.50,
-          image: "https://images.unsplash.com/photo-1519869325930-281384150729?q=80&w=1000&auto=format&fit=crop",
-          category: "Desserts",
-          categoryId: "dessert",
-          description: "Buttery pastry crust filled with vanilla custard and topped with fresh seasonal fruits."
-        },
-        {
-          id: "5",
-          name: "Baguette",
-          price: 169.00,
-          image: "https://images.unsplash.com/photo-1549931319-a545dcf3bc73?q=80&w=1000&auto=format&fit=crop",
-          category: "Bread",
-          categoryId: "bread",
-          description: "Traditional French bread known for its long, thin shape and crispy crust."
-        },
-        {
-          id: "6",
-          name: "Cinnamon Roll",
-          price: 189.00,
-          image: "https://images.unsplash.com/photo-1509365465985-25d11c17e812?q=80&w=1000&auto=format&fit=crop",
-          category: "Pastry",
-          categoryId: "pastry",
-          description: "Sweet roll with a cinnamon-sugar filling and topped with cream cheese frosting."
-        },
-        {
-          id: "7",
-          name: "Red Velvet Cake",
-          price: 1499.00,
-          image: "https://images.unsplash.com/photo-1586788680434-30d324626f4c?q=80&w=1000&auto=format&fit=crop",
-          category: "Cakes",
-          categoryId: "cake",
-          description: "Distinctive red-colored cake with a subtle chocolate flavor and cream cheese frosting."
-        },
-        {
-          id: "8",
-          name: "Cheesecake",
-          price: 279.00,
-          image: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?q=80&w=1000&auto=format&fit=crop",
-          category: "Desserts",
-          categoryId: "dessert",
-          description: "Creamy dessert with a graham cracker crust, topped with fresh berries."
-        }
-      ];
+      const storedProducts = localStorage.getItem('products');
+      let allProducts = [];
+
+      if (storedProducts) {
+        // Use products from localStorage
+        allProducts = JSON.parse(storedProducts);
+      } else {
+        // Fallback to sample products if none in localStorage
+        allProducts = [
+          {
+            id: "1",
+            name: "Classic Croissant",
+            price: 199.50,
+            image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?q=80&w=1000&auto=format&fit=crop",
+            category: "Pastry",
+            categoryId: "pastry",
+            description: "A buttery, flaky pastry named for its historical crescent shape."
+          },
+          {
+            id: "2",
+            name: "Chocolate Cake",
+            price: 1299.00,
+            image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1000&auto=format&fit=crop",
+            category: "Cakes",
+            categoryId: "cake",
+            description: "Rich, moist chocolate cake with smooth chocolate ganache and chocolate shavings."
+          },
+          {
+            id: "3",
+            name: "Sourdough Bread",
+            price: 299.00,
+            image: "https://images.unsplash.com/photo-1585478259715-4d3f99e36561?q=80&w=1000&auto=format&fit=crop",
+            category: "Bread",
+            categoryId: "bread",
+            description: "Artisan bread made with a fermented dough starter, giving it a slightly sour taste."
+          }
+        ];
+      }
 
       const foundProduct = allProducts.find(p => p.id === id);
       if (foundProduct) {
         setProduct(foundProduct);
       } else {
         // Product not found, redirect to shop
+        toast({
+          title: "Product Not Found",
+          description: "The product you're looking for doesn't exist or has been removed.",
+          variant: "destructive"
+        });
         navigate("/shop");
       }
     };
 
     loadProduct();
-  }, [id, navigate]);
+
+    // Listen for product updates
+    const handleProductsUpdated = () => {
+      loadProduct();
+    };
+
+    window.addEventListener('productsUpdated', handleProductsUpdated);
+
+    return () => {
+      window.removeEventListener('productsUpdated', handleProductsUpdated);
+    };
+  }, [id, navigate, toast]);
 
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity >= 1) {
@@ -203,7 +226,7 @@ const ProductDetailPage = () => {
 
     // Create a unique ID for this item with customizations
     const customizationId = isCustomizing ?
-      `-${customization.isEggless ? 'e' : ''}${customization.nameOnCake ? 'n' : ''}${customization.imageOnCake ? 'i' : ''}` : '';
+      `-${customization.isEggless ? 'e' : ''}${customization.isLactoseFree ? 'l' : ''}${customization.isVegan ? 'v' : ''}${customization.nameOnCake ? 'n' : ''}${customization.imageOnCake ? 'i' : ''}` : '';
     const itemId = `${product.id}${customizationId}`;
 
     // Check if this exact item (with same customizations) exists
@@ -225,6 +248,8 @@ const ProductDetailPage = () => {
         quantity,
         customization: isCustomizing ? {
           isEggless: customization.isEggless,
+          isLactoseFree: customization.isLactoseFree,
+          isVegan: customization.isVegan,
           nameOnCake: customization.nameOnCake,
           imageOnCake: customization.imageOnCake,
           uploadedImage: customization.uploadedImage,
@@ -317,21 +342,52 @@ const ProductDetailPage = () => {
                 {product.categoryId === "cake" && (
                   <TabsContent value="customize" className="pt-4 space-y-4">
                     <div className="space-y-6">
-                      {/* Egg/Eggless Option */}
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="eggless"
-                          checked={customization.isEggless}
-                          onCheckedChange={(checked) =>
-                            handleCustomizationChange('isEggless', checked === true)
-                          }
-                        />
-                        <div>
-                          <Label htmlFor="eggless">Eggless (+₹100)</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Made without eggs, perfect for vegetarians
-                          </p>
-                        </div>
+                      {/* Dietary Restrictions Section */}
+                      <div className="space-y-3">
+                        <Label>Dietary Options</Label>
+
+                        {/* Dynamically render dietary options from config */}
+                        {pricingConfig.dietaryOptions.filter(option => option.isActive).map(option => {
+                          // Special handling for vegan option
+                          const isVegan = option.id === "vegan";
+                          const isEggless = option.id === "eggless";
+                          const isLactoseFree = option.id === "lactoseFree";
+
+                          return (
+                            <div key={option.id} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={option.id}
+                                checked={customization[option.id as keyof typeof customization] as boolean}
+                                onCheckedChange={(checked) => {
+                                  handleCustomizationChange(option.id as keyof typeof customization, checked === true);
+
+                                  // Handle interdependencies
+                                  if (isEggless && checked === false && customization.isVegan) {
+                                    // If eggless is unchecked but vegan is selected, uncheck vegan
+                                    handleCustomizationChange('isVegan', false);
+                                  }
+
+                                  if (isLactoseFree && checked === false && customization.isVegan) {
+                                    // If lactose-free is unchecked but vegan is selected, uncheck vegan
+                                    handleCustomizationChange('isVegan', false);
+                                  }
+
+                                  if (isVegan && checked === true) {
+                                    // If vegan is checked, also check eggless and lactose-free
+                                    handleCustomizationChange('isEggless', true);
+                                    handleCustomizationChange('isLactoseFree', true);
+                                  }
+                                }}
+                              />
+                              <div>
+                                <Label htmlFor={option.id}>{option.name} (+₹{option.price})</Label>
+                                <p className="text-sm text-muted-foreground">
+                                  {option.description}
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
 
                       {/* Cake Size */}

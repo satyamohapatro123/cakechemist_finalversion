@@ -35,6 +35,10 @@ import TestimonialManagement from "@/components/admin/TestimonialManagement";
 import ContactManagement from "@/components/admin/ContactManagement";
 import RecipeManagement from "@/components/admin/RecipeManagement";
 import GalleryManagement from "@/components/admin/GalleryManagement";
+import PricingManagement from "@/components/admin/PricingManagement";
+import FinancialDashboard from "@/components/admin/FinancialDashboard";
+import CouponManagement from "@/components/admin/CouponManagement";
+import AboutPageManagement from "@/components/admin/AboutPageManagement";
 
 interface Customer {
   name: string;
@@ -73,7 +77,7 @@ interface Order {
 const AdminPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { currentUser, isAdmin, logout } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -86,7 +90,7 @@ const AdminPage = () => {
   // Check if user is admin - strict access control
   useEffect(() => {
     // If no user is logged in, redirect to login
-    if (!user) {
+    if (!currentUser) {
       toast({
         title: "Authentication Required",
         description: "Please log in to access this page.",
@@ -97,7 +101,7 @@ const AdminPage = () => {
     }
 
     // If user is not an admin, redirect to home
-    if (!user.isAdmin) {
+    if (!isAdmin) {
       toast({
         title: "Access Denied",
         description: "This area is restricted to administrators only.",
@@ -108,10 +112,10 @@ const AdminPage = () => {
     }
 
     // Log admin access for security purposes
-    console.log(`Admin panel accessed by: ${user.email} at ${new Date().toLocaleString()}`);
+    console.log(`Admin panel accessed by: ${currentUser.email} at ${new Date().toLocaleString()}`);
 
     // In a real app, you would log this access to a secure server
-  }, [user, navigate, toast]);
+  }, [currentUser, isAdmin, navigate, toast]);
 
   // Load orders from localStorage
   useEffect(() => {
@@ -246,10 +250,10 @@ const AdminPage = () => {
             subtitle="Manage your products, orders, team, and testimonials"
             center
           />
-          {user && (
+          {currentUser && (
             <div className="mt-4 text-center">
               <p className="text-red-700 mb-2">
-                Welcome, <span className="font-medium">{user.name}</span>! You are logged in as an administrator.
+                Welcome, <span className="font-medium">{currentUser.name}</span>! You are logged in as an administrator.
               </p>
               <div className="flex justify-center space-x-2">
                 <Button
@@ -282,14 +286,18 @@ const AdminPage = () => {
       <section className="py-8">
         <div className="container-custom">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid grid-cols-7 w-full">
+            <TabsList className="grid grid-cols-11 w-full">
               <TabsTrigger value="orders">Orders</TabsTrigger>
               <TabsTrigger value="products">Products</TabsTrigger>
               <TabsTrigger value="recipes">Recipes</TabsTrigger>
               <TabsTrigger value="gallery">Gallery</TabsTrigger>
+              <TabsTrigger value="pricing">Pricing</TabsTrigger>
+              <TabsTrigger value="coupons">Coupons</TabsTrigger>
+              <TabsTrigger value="financial">Financial</TabsTrigger>
               <TabsTrigger value="team">Team</TabsTrigger>
               <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
               <TabsTrigger value="contact">Contact</TabsTrigger>
+              <TabsTrigger value="about">About</TabsTrigger>
             </TabsList>
 
             <TabsContent value="orders">
@@ -403,6 +411,18 @@ const AdminPage = () => {
               <GalleryManagement />
             </TabsContent>
 
+            <TabsContent value="pricing">
+              <PricingManagement />
+            </TabsContent>
+
+            <TabsContent value="coupons">
+              <CouponManagement />
+            </TabsContent>
+
+            <TabsContent value="financial">
+              <FinancialDashboard />
+            </TabsContent>
+
             <TabsContent value="team">
               <TeamManagement />
             </TabsContent>
@@ -413,6 +433,10 @@ const AdminPage = () => {
 
             <TabsContent value="contact">
               <ContactManagement />
+            </TabsContent>
+
+            <TabsContent value="about">
+              <AboutPageManagement />
             </TabsContent>
           </Tabs>
         </div>

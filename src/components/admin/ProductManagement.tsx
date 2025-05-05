@@ -17,11 +17,13 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter
+  DialogFooter,
+  DialogDescription
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Pencil, Trash, Plus, Image, Tag, X } from "lucide-react";
+import { Pencil, Trash, Plus, Image, Tag, X, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { updateOrdersWithProduct, removeProductFromOrders, initializeOrders } from "@/services/ProductOrderService";
 
 interface Product {
   id: string;
@@ -188,6 +190,9 @@ const ProductManagement = () => {
     setProducts(updatedProducts);
     localStorage.setItem('products', JSON.stringify(updatedProducts));
 
+    // Initialize orders if they don't exist
+    initializeOrders(updatedProducts);
+
     // Dispatch event for other parts of the app
     const event = new CustomEvent('productsUpdated');
     window.dispatchEvent(event);
@@ -244,6 +249,25 @@ const ProductManagement = () => {
   // Open delete product dialog
   const openDeleteDialog = (product: Product) => {
     setSelectedProduct(product);
+
+    // Check if product is in any orders
+    const ordersJson = localStorage.getItem('orders');
+    let hasOrdersWithProduct = false;
+
+    if (ordersJson) {
+      const orders = JSON.parse(ordersJson);
+      hasOrdersWithProduct = orders.some(order =>
+        order.items.some(item => item.productId === product.id)
+      );
+    }
+
+    // Set a flag on the selected product to indicate if it's in orders
+    setSelectedProduct({
+      ...product,
+      // @ts-ignore - Adding a custom property
+      isInOrders: hasOrdersWithProduct
+    });
+
     setIsDeleteDialogOpen(true);
   };
 
@@ -286,11 +310,16 @@ const ProductManagement = () => {
       return;
     }
 
+    const updatedProduct = { ...formData };
     const updatedProducts = products.map(product =>
-      product.id === selectedProduct.id ? { ...formData } : product
+      product.id === selectedProduct.id ? updatedProduct : product
     );
 
+    // Save products to localStorage
     saveProducts(updatedProducts);
+
+    // Update orders with the updated product
+    updateOrdersWithProduct(updatedProduct);
 
     toast({
       title: "Product Updated",
@@ -304,13 +333,36 @@ const ProductManagement = () => {
   const handleDeleteProduct = () => {
     if (!selectedProduct) return;
 
+    // Check if product is in any orders
+    const ordersJson = localStorage.getItem('orders');
+    let hasOrdersWithProduct = false;
+
+    if (ordersJson) {
+      const orders = JSON.parse(ordersJson);
+      hasOrdersWithProduct = orders.some(order =>
+        order.items.some(item => item.productId === selectedProduct.id)
+      );
+    }
+
+    // Remove product from products list
     const updatedProducts = products.filter(product => product.id !== selectedProduct.id);
     saveProducts(updatedProducts);
 
-    toast({
-      title: "Product Deleted",
-      description: `${selectedProduct.name} has been deleted successfully.`
-    });
+    // Remove product from orders
+    if (hasOrdersWithProduct) {
+      removeProductFromOrders(selectedProduct.id);
+
+      toast({
+        title: "Product Deleted",
+        description: `${selectedProduct.name} has been deleted and removed from existing orders.`,
+        variant: "default"
+      });
+    } else {
+      toast({
+        title: "Product Deleted",
+        description: `${selectedProduct.name} has been deleted successfully.`
+      });
+    }
 
     setIsDeleteDialogOpen(false);
   };
@@ -709,11 +761,31 @@ const ProductManagement = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete Product</DialogTitle>
+            {/* @ts-ignore - Using custom property */}
+            {selectedProduct?.isInOrders && (
+              <DialogDescription className="text-amber-600">
+                This product is used in existing orders
+              </DialogDescription>
+            )}
           </DialogHeader>
 
           <div className="py-4">
             <p>Are you sure you want to delete <strong>{selectedProduct?.name}</strong>?</p>
             <p className="text-muted-foreground mt-2">This action cannot be undone.</p>
+
+            {/* @ts-ignore - Using custom property */}
+            {selectedProduct?.isInOrders && (
+              <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-md flex items-start">
+                <AlertTriangle className="h-5 w-5 text-amber-600 mr-3 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-amber-800 font-medium">Warning: Product in use</p>
+                  <p className="text-amber-700 text-sm mt-1">
+                    This product is currently used in one or more orders. If you delete it,
+                    it will be removed from those orders, which may affect order totals and reporting.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           <DialogFooter>

@@ -14,7 +14,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const { login, register, loginWithGoogle, isLoading, user } = useAuth();
+  const { login, register, loginWithGoogle, isLoading, currentUser, isAdmin } = useAuth();
 
   // Check for redirect parameter in URL
   const [redirectPath, setRedirectPath] = useState<string | null>(null);
@@ -36,9 +36,9 @@ const LoginPage = () => {
 
   // Redirect if user is already logged in
   useEffect(() => {
-    if (user) {
+    if (currentUser) {
       if (redirectPath === 'admin') {
-        if (user.isAdmin) {
+        if (isAdmin) {
           navigate('/admin');
         } else {
           toast({
@@ -52,7 +52,7 @@ const LoginPage = () => {
         navigate(redirectPath ? `/${redirectPath}` : '/profile');
       }
     }
-  }, [user, redirectPath, navigate, toast]);
+  }, [currentUser, isAdmin, redirectPath, navigate, toast]);
 
   const [loginData, setLoginData] = useState({
     email: "",
@@ -86,21 +86,18 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
-      const loggedInUser = await login(loginData.email, loginData.password);
+      await login(loginData.email, loginData.password);
 
-      // Handle redirect based on user type and redirect path
-      if (loggedInUser?.isAdmin) {
+      // The login function will update isAdmin in the AuthContext
+      // We can check it here to determine where to redirect
+      if (isAdmin) {
         toast({
           title: "Admin Login Successful",
           description: "Welcome to the admin panel"
         });
 
         // If redirected from admin page or explicitly trying to access admin
-        if (redirectPath === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/admin');
-        }
+        navigate('/admin');
       } else {
         toast({
           title: "Login successful",
@@ -150,21 +147,18 @@ const LoginPage = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      const loggedInUser = await loginWithGoogle();
+      await loginWithGoogle();
 
-      // Handle redirect based on user type and redirect path
-      if (loggedInUser?.isAdmin) {
+      // The loginWithGoogle function will update isAdmin in the AuthContext
+      // We can check it here to determine where to redirect
+      if (isAdmin) {
         toast({
           title: "Admin Login Successful",
           description: "Welcome to the admin panel"
         });
 
         // If redirected from admin page or explicitly trying to access admin
-        if (redirectPath === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/admin');
-        }
+        navigate('/admin');
       } else {
         toast({
           title: "Login successful",

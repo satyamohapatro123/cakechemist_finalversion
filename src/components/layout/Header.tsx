@@ -3,13 +3,31 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ShoppingBag, Menu, X, Beaker, User, Settings } from 'lucide-react';
+import {
+  ShoppingBag,
+  Menu,
+  X,
+  Beaker,
+  User,
+  Settings,
+  LogOut,
+  UserCog,
+  Shield
+} from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [cartItemsCount, setCartItemsCount] = useState(0);
-  const { user } = useAuth();
+  const { currentUser, isAuthenticated, isAdmin, logout } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -58,9 +76,9 @@ const Header = () => {
           <Link to="/recipes" className="font-medium hover:text-bakery-700 transition-colors">Recipes</Link>
           <Link to="/gallery" className="font-medium hover:text-bakery-700 transition-colors">Gallery</Link>
           <Link to="/contact" className="font-medium hover:text-bakery-700 transition-colors">Contact</Link>
-          {user?.isAdmin && (
+          {isAdmin && (
             <Link to="/admin" className="font-medium text-bakery-700 hover:text-bakery-800 transition-colors flex items-center">
-              <Settings className="h-4 w-4 mr-1" />
+              <Shield className="h-4 w-4 mr-1" />
               Admin
             </Link>
           )}
@@ -72,15 +90,50 @@ const Header = () => {
             <span className="absolute -top-1 -right-1 bg-bakery-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">{cartItemsCount}</span>
           </Link>
 
-          {user ? (
-            <Link to="/profile" className="hidden lg:flex items-center">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={user.photoURL} alt={user.name} />
-                <AvatarFallback className="bg-bakery-100 text-bakery-800">
-                  {user.name.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-            </Link>
+          {isAuthenticated ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={currentUser?.profilePicture} alt={currentUser?.name} />
+                    <AvatarFallback className="bg-bakery-100 text-bakery-800">
+                      {currentUser?.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{currentUser?.name}</p>
+                    <p className="text-xs leading-none text-muted-foreground">{currentUser?.email}</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/profile" className="cursor-pointer">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>My Profile</span>
+                  </Link>
+                </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin/profile" className="cursor-pointer">
+                      <UserCog className="mr-2 h-4 w-4" />
+                      <span>Admin Profile</span>
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => logout()}
+                  className="cursor-pointer text-red-600 focus:text-red-600"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <Button variant="outline" asChild className="hidden lg:flex">
               <Link to="/login">Login</Link>
@@ -122,23 +175,43 @@ const Header = () => {
             <Link to="/recipes" onClick={() => setIsMenuOpen(false)} className="font-medium hover:text-bakery-700 transition-colors">Recipes</Link>
             <Link to="/gallery" onClick={() => setIsMenuOpen(false)} className="font-medium hover:text-bakery-700 transition-colors">Gallery</Link>
             <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="font-medium hover:text-bakery-700 transition-colors">Contact</Link>
-            {user?.isAdmin && (
+            {isAdmin && (
               <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="font-medium text-bakery-700 hover:text-bakery-800 transition-colors flex items-center">
-                <Settings className="h-4 w-4 mr-2" />
+                <Shield className="h-4 w-4 mr-2" />
                 Admin Panel
               </Link>
             )}
 
-            {user ? (
-              <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="font-medium hover:text-bakery-700 transition-colors flex items-center">
-                <Avatar className="h-6 w-6 mr-2">
-                  <AvatarImage src={user.photoURL} alt={user.name} />
-                  <AvatarFallback className="bg-bakery-100 text-bakery-800 text-xs">
-                    {user.name.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                My Profile
-              </Link>
+            {isAuthenticated ? (
+              <>
+                <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="font-medium hover:text-bakery-700 transition-colors flex items-center">
+                  <Avatar className="h-6 w-6 mr-2">
+                    <AvatarImage src={currentUser?.profilePicture} alt={currentUser?.name} />
+                    <AvatarFallback className="bg-bakery-100 text-bakery-800 text-xs">
+                      {currentUser?.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  My Profile
+                </Link>
+
+                {isAdmin && (
+                  <Link to="/admin/profile" onClick={() => setIsMenuOpen(false)} className="font-medium hover:text-bakery-700 transition-colors flex items-center">
+                    <UserCog className="h-4 w-4 mr-2" />
+                    Admin Profile
+                  </Link>
+                )}
+
+                <button
+                  onClick={() => {
+                    logout();
+                    setIsMenuOpen(false);
+                  }}
+                  className="font-medium text-red-600 hover:text-red-700 transition-colors flex items-center"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Log Out
+                </button>
+              </>
             ) : (
               <Link to="/login" onClick={() => setIsMenuOpen(false)} className="font-medium hover:text-bakery-700 transition-colors">
                 Login / Register
