@@ -15,7 +15,28 @@ interface Product {
   description?: string;
 }
 
+interface HomePageContent {
+  heroImage: string;
+  heroTitle: string;
+  heroSubtitle: string;
+  featuredTitle: string;
+  featuredSubtitle: string;
+  ctaTitle: string;
+  ctaSubtitle: string;
+}
+
+const defaultContent: HomePageContent = {
+  heroImage: "https://images.unsplash.com/photo-1517433367423-c7e5b0f35086?q=80&w=1080&auto=format&fit=crop",
+  heroTitle: "Handcrafted with Love",
+  heroSubtitle: "Indulge in our freshly baked treats made with the finest ingredients and passion for quality.",
+  featuredTitle: "Our Featured Products",
+  featuredSubtitle: "Handmade with love and the finest ingredients",
+  ctaTitle: "Ready to Place an Order?",
+  ctaSubtitle: "Browse our selection of freshly-baked goods and place your order for pickup today."
+};
+
 const HomePage = () => {
+  const [content, setContent] = useState<HomePageContent>(defaultContent);
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([
     {
       id: "1",
@@ -46,6 +67,30 @@ const HomePage = () => {
       category: "Desserts"
     }
   ]);
+
+  // Load home page content from localStorage
+  useEffect(() => {
+    const loadHomePageContent = () => {
+      const storedContent = localStorage.getItem('homePageContent');
+      if (storedContent) {
+        setContent(JSON.parse(storedContent));
+      }
+    };
+
+    loadHomePageContent();
+
+    // Listen for home page content updates
+    const handleHomePageUpdated = () => {
+      console.log("Home page content updated event received");
+      loadHomePageContent();
+    };
+
+    window.addEventListener('homePageUpdated', handleHomePageUpdated);
+
+    return () => {
+      window.removeEventListener('homePageUpdated', handleHomePageUpdated);
+    };
+  }, []);
 
   // Load products from localStorage
   useEffect(() => {
@@ -85,7 +130,7 @@ const HomePage = () => {
       <section className="relative h-[80vh] min-h-[600px] flex items-center">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1517433367423-c7e5b0f35086?q=80&w=1080&auto=format&fit=crop"
+            src={content.heroImage}
             alt="Freshly baked goods"
             className="h-full w-full object-cover"
           />
@@ -93,9 +138,9 @@ const HomePage = () => {
         </div>
         <div className="container-custom relative z-10 text-white">
           <div className="max-w-xl">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif mb-4">Handcrafted with Love</h1>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif mb-4">{content.heroTitle}</h1>
             <p className="text-lg md:text-xl mb-8">
-              Indulge in our freshly baked treats made with the finest ingredients and passion for quality.
+              {content.heroSubtitle}
             </p>
             <Button size="lg" asChild>
               <Link to="/shop">Order Now</Link>
@@ -108,8 +153,8 @@ const HomePage = () => {
       <section className="py-20">
         <div className="container-custom">
           <SectionHeading
-            title="Our Featured Products"
-            subtitle="Handmade with love and the finest ingredients"
+            title={content.featuredTitle}
+            subtitle={content.featuredSubtitle}
             center
           />
 
@@ -195,9 +240,9 @@ const HomePage = () => {
       {/* CTA Section */}
       <section className="py-20 bg-bakery-800 text-white">
         <div className="container-custom text-center">
-          <h2 className="text-3xl md:text-4xl font-serif mb-4">Ready to Place an Order?</h2>
+          <h2 className="text-3xl md:text-4xl font-serif mb-4">{content.ctaTitle}</h2>
           <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto">
-            Browse our selection of freshly-baked goods and place your order for pickup today.
+            {content.ctaSubtitle}
           </p>
           <Button variant="secondary" size="lg" className="text-bakery-800" asChild>
             <Link to="/shop">Shop Now</Link>

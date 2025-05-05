@@ -39,6 +39,7 @@ import PricingManagement from "@/components/admin/PricingManagement";
 import FinancialDashboard from "@/components/admin/FinancialDashboard";
 import CouponManagement from "@/components/admin/CouponManagement";
 import AboutPageManagement from "@/components/admin/AboutPageManagement";
+import HomePageManagement from "@/components/admin/HomePageManagement";
 
 interface Customer {
   name: string;
@@ -264,6 +265,13 @@ const AdminPage = () => {
                   View Website
                 </Button>
                 <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate('/admin/profile')}
+                >
+                  Admin Profile
+                </Button>
+                <Button
                   variant="destructive"
                   size="sm"
                   onClick={async () => {
@@ -286,7 +294,7 @@ const AdminPage = () => {
       <section className="py-8">
         <div className="container-custom">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid grid-cols-11 w-full">
+            <TabsList className="grid grid-cols-12 w-full">
               <TabsTrigger value="orders">Orders</TabsTrigger>
               <TabsTrigger value="products">Products</TabsTrigger>
               <TabsTrigger value="recipes">Recipes</TabsTrigger>
@@ -298,6 +306,7 @@ const AdminPage = () => {
               <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
               <TabsTrigger value="contact">Contact</TabsTrigger>
               <TabsTrigger value="about">About</TabsTrigger>
+              <TabsTrigger value="home">Home</TabsTrigger>
             </TabsList>
 
             <TabsContent value="orders">
@@ -437,6 +446,10 @@ const AdminPage = () => {
 
             <TabsContent value="about">
               <AboutPageManagement />
+            </TabsContent>
+
+            <TabsContent value="home">
+              <HomePageManagement />
             </TabsContent>
           </Tabs>
         </div>
