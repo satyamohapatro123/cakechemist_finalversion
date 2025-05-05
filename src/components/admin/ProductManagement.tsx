@@ -89,6 +89,10 @@ const ProductManagement = () => {
   const saveCategories = (updatedCategories: Category[]) => {
     setCategories(updatedCategories);
     localStorage.setItem('categories', JSON.stringify(updatedCategories));
+
+    // Dispatch event for other parts of the app
+    const event = new CustomEvent('categoriesUpdated');
+    window.dispatchEvent(event);
   };
 
   // Load products

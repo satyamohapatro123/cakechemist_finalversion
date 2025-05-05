@@ -19,18 +19,43 @@ interface Product {
 }
 
 const ShopPage = () => {
-  // Categories
-  const categories: Category[] = [
+  // Categories state
+  const [categories, setCategories] = useState<Category[]>([
     { id: "all", name: "All Products" },
-    { id: "bread", name: "Bread" },
-    { id: "pastry", name: "Pastries" },
-    { id: "cake", name: "Cakes" },
-    { id: "dessert", name: "Desserts" },
-  ];
+  ]);
 
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [activeCategory, setActiveCategory] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
+
+  // Load categories from localStorage
+  useEffect(() => {
+    const loadCategories = () => {
+      const storedCategories = localStorage.getItem('categories');
+      if (storedCategories) {
+        // Parse stored categories and add the "All Products" option
+        const parsedCategories = JSON.parse(storedCategories);
+        setCategories([
+          { id: "all", name: "All Products" },
+          ...parsedCategories
+        ]);
+      }
+    };
+
+    loadCategories();
+
+    // Listen for category updates
+    const handleCategoriesUpdated = () => {
+      console.log("Categories updated event received in ShopPage");
+      loadCategories();
+    };
+
+    window.addEventListener('categoriesUpdated', handleCategoriesUpdated);
+
+    return () => {
+      window.removeEventListener('categoriesUpdated', handleCategoriesUpdated);
+    };
+  }, []);
 
   // Load products from localStorage
   useEffect(() => {
